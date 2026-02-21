@@ -2,74 +2,110 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chess Timer Pro</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Chess Timer Responsive Pro</title>
     <style>
       :root {
-        --bg-color: #121212;
-        --p1-color: #2c3e50;
-        --p2-color: #c0392b;
-        --accent: #27ae60;
+        --bg-color: #0f0f0f;
+        --p1-color: #1e3a8a; /* Biru Gelap */
+        --p2-color: #7f1d1d; /* Merah Gelap */
+        --accent: #059669;
         --text: #ffffff;
+        --panel-bg: #18181b;
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
-        font-family: "Segoe UI", sans-serif;
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
         background-color: var(--bg-color);
         color: var(--text);
         margin: 0;
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 100vh; /* Kunci tinggi layar */
+        width: 100vw;
         overflow: hidden;
       }
 
-      /* Toolbar Pengaturan */
+      /* Toolbar Atas */
       .settings-bar {
-        background: #1e1e1e;
-        padding: 15px;
+        background: var(--panel-bg);
+        padding: 10px;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        align-items: center;
-        gap: 15px;
-        border-bottom: 2px solid #333;
+        gap: 10px;
+        border-bottom: 1px solid #333;
+        z-index: 10;
       }
 
       .input-group {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 5px;
+        font-size: 0.8rem;
       }
 
       input,
       select,
       button {
         padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #444;
-        background: #2c2c2c;
+        border-radius: 6px;
+        border: 1px solid #3f3f46;
+        background: #27272a;
         color: white;
-        font-weight: bold;
+        font-size: 0.9rem;
       }
 
       button {
         background: var(--accent);
         cursor: pointer;
         border: none;
-        padding: 8px 20px;
+        font-weight: bold;
+      }
+      button:active {
+        transform: scale(0.95);
       }
 
-      button:hover {
-        opacity: 0.9;
-      }
-
-      /* Area Timer */
+      /* Area Utama (Timer) */
       .game-container {
         display: flex;
-        flex: 1;
+        flex: 1; /* Mengambil sisa ruang antara header dan log */
+        min-height: 0;
+        flex-direction: row; /* Default: Sampingan (Desktop) */
       }
 
+      /* Responsif HP: Timer Atas-Bawah */
+      @media (max-width: 768px) {
+        .game-container {
+          flex-direction: column;
+        }
+
+        /* Memutar area Pemain 1 agar menghadap lawan */
+        #zone1 {
+          transform: rotate(180deg);
+        }
+
+        .time-display {
+          font-size: 5rem !important;
+        }
+
+        /* Memastikan label "PEMAIN 1" juga terbaca benar olehnya */
+        #zone1 span {
+          margin-top: 10px;
+        }
+      }
+
+      /* Memperhalus tampilan zona agar teks tetap di tengah saat diputar */
       .player-zone {
         flex: 1;
         display: flex;
@@ -77,8 +113,9 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
+        transition: background 0.2s;
+        -webkit-tap-highlight-color: transparent;
+        width: 100%; /* Pastikan lebar penuh saat vertikal */
       }
 
       #zone1 {
@@ -89,201 +126,262 @@
       }
 
       .time-display {
-        font-size: clamp(4rem, 15vw, 10rem);
-        font-family: monospace;
+        font-size: 7rem;
+        font-weight: 800;
+        font-family: "Monaco", monospace;
+        margin: 10px 0;
       }
 
-      .info {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-        opacity: 0.8;
-      }
-
-      /* Status Aktif/Mati */
       .active {
-        opacity: 1;
+        filter: brightness(1.3);
         z-index: 2;
-        transform: scale(1);
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
       }
       .inactive {
-        opacity: 0.2;
-        transform: scale(0.95);
-        pointer-events: none;
+        opacity: 0.25;
+        filter: grayscale(0.5);
+      }
+      .low-time {
+        color: #fbbf24;
+        animation: pulse 0.5s infinite;
       }
 
-      .overlay-msg {
-        position: absolute;
-        top: 20px;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 5px 15px;
-        border-radius: 20px;
-        display: none;
+      @keyframes pulse {
+        50% {
+          opacity: 0.7;
+        }
       }
-      .active .overlay-msg {
-        display: block;
+
+      /* Panel Log Bawah */
+      .log-container {
+        height: 180px; /* Tinggi dikunci agar tidak menutup timer */
+        background: #000;
+        border-top: 2px solid #27272a;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .log-header {
+        padding: 8px 15px;
+        background: #18181b;
+        font-size: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #a1a1aa;
+      }
+
+      #moveLog {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .log-item {
+        display: grid;
+        grid-template-columns: 40px 1fr 1fr 80px;
+        padding: 10px 15px;
+        border-bottom: 1px solid #18181b;
+        font-size: 0.85rem;
+      }
+
+      .p1-tag {
+        color: #60a5fa;
+        font-weight: bold;
+      }
+      .p2-tag {
+        color: #f87171;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
     <div class="settings-bar">
+      <select id="modeSelect" onchange="toggleIncInput()">
+        <option value="normal">Normal</option>
+        <option value="increment">Increment</option>
+      </select>
       <div class="input-group">
-        <label>Mode:</label>
-        <select id="modeSelect" onchange="toggleIncrementInput()">
-          <option value="normal">Normal</option>
-          <option value="increment">Increment (Fischer)</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>Waktu (Menit):</label>
         <input
           type="number"
-          id="baseMinutes"
+          id="baseMins"
           value="5"
           min="1"
           style="width: 50px"
         />
+        <span>Min</span>
       </div>
-
-      <div class="input-group" id="incGroup" style="display: none">
-        <label>Bonus (Detik):</label>
+      <div id="incInput" style="display: none" class="input-group">
         <input
           type="number"
-          id="incSeconds"
+          id="incSecs"
           value="3"
           min="0"
-          style="width: 50px"
+          style="width: 45px"
         />
+        <span>Sec</span>
       </div>
-
-      <button onclick="initGame()">Set & Reset</button>
-      <button id="mainBtn" onclick="togglePlay()" style="background: #2980b9">
+      <button onclick="initGame()">Reset</button>
+      <button id="mainBtn" onclick="togglePlay()" style="background: #2563eb">
         Mulai
       </button>
     </div>
 
     <div class="game-container">
       <div id="zone1" class="player-zone" onclick="handleTap(1)">
-        <div class="overlay-msg">GILIRANMU</div>
-        <div class="info">PEMAIN 1 (Kiri / Spasi)</div>
+        <span style="font-size: 0.9rem; font-weight: bold; opacity: 0.8"
+          >PEMAIN 1</span
+        >
         <div id="disp1" class="time-display">05:00</div>
       </div>
+
       <div id="zone2" class="player-zone" onclick="handleTap(2)">
-        <div class="overlay-msg">GILIRANMU</div>
-        <div class="info">PEMAIN 2 (Kanan / Enter)</div>
+        <span style="font-size: 0.9rem; font-weight: bold; opacity: 0.8"
+          >PEMAIN 2</span
+        >
         <div id="disp2" class="time-display">05:00</div>
       </div>
     </div>
 
-    <script>
-      let t1, t2, timer;
-      let activePlayer = null; // 1 atau 2
-      let isRunning = false;
-      let mode = "normal";
-      let increment = 0;
+    <div class="log-container">
+      <div class="log-header">
+        <span>Riwayat Langkah</span>
+        <span id="moveCount">Total: 0</span>
+      </div>
+      <ul id="moveLog"></ul>
+    </div>
 
-      function toggleIncrementInput() {
-        const isInc =
-          document.getElementById("modeSelect").value === "increment";
-        document.getElementById("incGroup").style.display = isInc
-          ? "flex"
-          : "none";
+    <script>
+      let t1,
+        t2,
+        timer,
+        activePlayer = null,
+        isRunning = false,
+        moveCounter = 0,
+        lastTime = 0;
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      function playSound(f, d) {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.frequency.value = f;
+        g.gain.value = 0.05;
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start();
+        o.stop(audioCtx.currentTime + d);
+      }
+
+      function toggleIncInput() {
+        document.getElementById("incInput").style.display =
+          document.getElementById("modeSelect").value === "increment"
+            ? "flex"
+            : "none";
       }
 
       function initGame() {
         clearInterval(timer);
-        const mins = parseInt(document.getElementById("baseMinutes").value);
-        mode = document.getElementById("modeSelect").value;
-        increment =
-          mode === "increment"
-            ? parseInt(document.getElementById("incSeconds").value)
-            : 0;
-
-        t1 = mins * 60;
-        t2 = mins * 60;
+        t1 = t2 = document.getElementById("baseMins").value * 60;
         activePlayer = null;
         isRunning = false;
-
+        moveCounter = 0;
         document.getElementById("mainBtn").textContent = "Mulai";
-        document.getElementById("zone1").className = "player-zone";
-        document.getElementById("zone2").className = "player-zone";
+        document.getElementById("moveLog").innerHTML = "";
+        document.getElementById("moveCount").textContent = "Total: 0";
         updateUI();
       }
 
       function updateUI() {
         document.getElementById("disp1").textContent = format(t1);
         document.getElementById("disp2").textContent = format(t2);
+        document.getElementById("zone1").className =
+          `player-zone ${activePlayer === 1 ? "active" : activePlayer === null ? "" : "inactive"}`;
+        document.getElementById("zone2").className =
+          `player-zone ${activePlayer === 2 ? "active" : activePlayer === null ? "" : "inactive"}`;
+        if (t1 <= 10)
+          document.getElementById("disp1").classList.add("low-time");
+        if (t2 <= 10)
+          document.getElementById("disp2").classList.add("low-time");
       }
 
       function format(s) {
-        let m = Math.floor(s / 60);
-        let sec = s % 60;
-        return `${m.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+        return `${Math.floor(s / 60)
+          .toString()
+          .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
       }
 
       function togglePlay() {
+        if (audioCtx.state === "suspended") audioCtx.resume();
         if (isRunning) {
-          isRunning = false;
           clearInterval(timer);
+          isRunning = false;
           document.getElementById("mainBtn").textContent = "Lanjutkan";
         } else {
-          if (activePlayer === null) activePlayer = 1;
+          if (!activePlayer) activePlayer = 1;
+          lastTime = activePlayer === 1 ? t1 : t2;
           isRunning = true;
           document.getElementById("mainBtn").textContent = "Pause";
-          startCounting();
-          renderActive();
+          timer = setInterval(tick, 1000);
         }
       }
 
-      function startCounting() {
-        clearInterval(timer);
-        timer = setInterval(() => {
-          if (activePlayer === 1) {
-            t1--;
-            if (t1 <= 0) gameOver("Pemain 2 Menang!");
-          } else {
-            t2--;
-            if (t2 <= 0) gameOver("Pemain 1 Menang!");
-          }
-          updateUI();
-        }, 1000);
+      function tick() {
+        if (activePlayer === 1) {
+          t1--;
+          if (t1 <= 10) playSound(800, 0.05);
+          if (t1 <= 0) end(2);
+        } else {
+          t2--;
+          if (t2 <= 10) playSound(800, 0.05);
+          if (t2 <= 0) end(1);
+        }
+        updateUI();
       }
 
       function handleTap(id) {
         if (!isRunning || activePlayer !== id) return;
+        moveCounter++;
+        playSound(400, 0.03);
 
-        // Tambah bonus jika mode increment
-        if (mode === "increment") {
-          if (id === 1) t1 += increment;
-          else t2 += increment;
-        }
+        const current = id === 1 ? t1 : t2;
+        const inc =
+          document.getElementById("modeSelect").value === "increment"
+            ? parseInt(document.getElementById("incSecs").value)
+            : 0;
 
+        addLog(id, moveCounter, format(current), lastTime - current);
+
+        if (id === 1) t1 += inc;
+        else t2 += inc;
         activePlayer = id === 1 ? 2 : 1;
+        lastTime = activePlayer === 1 ? t1 : t2;
         updateUI();
-        renderActive();
       }
 
-      function renderActive() {
-        document.getElementById("zone1").className =
-          `player-zone ${activePlayer === 1 ? "active" : "inactive"}`;
-        document.getElementById("zone2").className =
-          `player-zone ${activePlayer === 2 ? "active" : "inactive"}`;
+      function addLog(p, m, rem, dur) {
+        const li = document.createElement("li");
+        li.className = "log-item";
+        li.innerHTML = `<span>#${m}</span><span class="${p === 1 ? "p1-tag" : "p2-tag"}">P${p}</span><span>Sisa: ${rem}</span><span style="color:#71717a">${dur}s</span>`;
+        const log = document.getElementById("moveLog");
+        log.insertBefore(li, log.firstChild);
+        document.getElementById("moveCount").textContent = `Total: ${m}`;
       }
 
-      function gameOver(msg) {
-        isRunning = false;
+      function end(p) {
         clearInterval(timer);
-        alert(msg);
+        playSound(200, 1);
+        alert(`Pemain ${p} Menang!`);
         initGame();
       }
 
-      // Keyboard support
       window.onkeydown = (e) => {
         if (e.code === "Space") handleTap(1);
         if (e.code === "Enter") handleTap(2);
       };
 
-      // Mulai pertama kali
       initGame();
     </script>
   </body>
