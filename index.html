@@ -1,343 +1,276 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>Chess Timer Responsive Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Chess Timer Pro - Professional Edition</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏳</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
       :root {
         --bg-color: #0f0f0f;
-        --p1-color: #1e3a8a; /* Biru Gelap */
-        --p2-color: #7f1d1d; /* Merah Gelap */
+        --p1-color: #1e3a8a;
+        --p2-color: #7f1d1d;
         --accent: #059669;
         --text: #ffffff;
         --panel-bg: #18181b;
+        --border: #3f3f46;
+        --input-bg: #27272a;
+        --option-bg: #27272a;
+        --option-text: #ffffff;
+        --warning: #f59e0b;
+        --danger: #ef4444;
       }
 
-      * {
-        box-sizing: border-box;
+      .light-theme {
+        --bg-color: #f4f4f5;
+        --p1-color: #3b82f6;
+        --p2-color: #ef4444;
+        --accent: #10b981;
+        --text: #18181b;
+        --panel-bg: #ffffff;
+        --border: #d4d4d8;
+        --input-bg: #ffffff;
+        --option-bg: #ffffff;
+        --option-text: #18181b;
       }
 
-      body {
-        font-family:
-          "Inter",
-          -apple-system,
-          sans-serif;
-        background-color: var(--bg-color);
-        color: var(--text);
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        height: 100vh; /* Kunci tinggi layar */
-        width: 100vw;
-        overflow: hidden;
-      }
+      * { box-sizing: border-box; }
+      body { font-family: "Inter", sans-serif; background-color: var(--bg-color); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: background-color 0.3s; }
+      .swal2-popup { background: var(--panel-bg) !important; color: var(--text) !important; border: 1px solid var(--border) !important; }
 
-      /* Toolbar Atas */
-      .settings-bar {
-        background: var(--panel-bg);
-        padding: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        border-bottom: 1px solid #333;
-        z-index: 10;
-      }
+      .settings-bar { background: var(--panel-bg); padding: 12px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); z-index: 10; }
+      .input-group { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 700; }
 
-      .input-group {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 0.8rem;
-      }
+      select, input { padding: 8px; border-radius: 6px; border: 1px solid var(--border); background-color: var(--input-bg); color: var(--text); font-size: 0.9rem; outline: none; text-align: center; font-weight: bold; }
+      
+      /* Widened input fields */
+      input[type="number"] { width: 70px; }
+      
+      button { padding: 8px 16px; border-radius: 6px; background: var(--accent); cursor: pointer; border: none; font-weight: bold; color: white; transition: transform 0.1s; font-size: 0.9rem; }
+      button:active { transform: scale(0.95); }
 
-      input,
-      select,
-      button {
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px solid #3f3f46;
-        background: #27272a;
-        color: white;
-        font-size: 0.9rem;
-      }
+      .game-container { display: flex; flex: 1; min-height: 0; }
+      @media (max-width: 768px) { .game-container { flex-direction: column; } #zone1 { transform: rotate(180deg); } .time-display { font-size: 4rem !important; } }
 
-      button {
-        background: var(--accent);
-        cursor: pointer;
-        border: none;
-        font-weight: bold;
-      }
-      button:active {
-        transform: scale(0.95);
-      }
+      .player-zone { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: background 0.2s, opacity 0.3s; -webkit-tap-highlight-color: transparent; color: white; position: relative; }
+      #zone1 { background-color: var(--p1-color); }
+      #zone2 { background-color: var(--p2-color); }
 
-      /* Area Utama (Timer) */
-      .game-container {
-        display: flex;
-        flex: 1; /* Mengambil sisa ruang antara header dan log */
-        min-height: 0;
-        flex-direction: row; /* Default: Sampingan (Desktop) */
-      }
+      .player-name { font-size: 1rem; font-weight: bold; opacity: 0.8; text-transform: uppercase; padding: 5px 10px; border: 1px dashed transparent; border-radius: 4px; margin-bottom: 10px; }
+      .time-display { font-size: 7rem; font-weight: 800; font-family: monospace; }
 
-      /* Responsif HP: Timer Atas-Bawah */
-      @media (max-width: 768px) {
-        .game-container {
-          flex-direction: column;
-        }
-
-        /* Memutar area Pemain 1 agar menghadap lawan */
-        #zone1 {
-          transform: rotate(180deg);
-        }
-
-        .time-display {
-          font-size: 5rem !important;
-        }
-
-        /* Memastikan label "PEMAIN 1" juga terbaca benar olehnya */
-        #zone1 span {
-          margin-top: 10px;
-        }
-      }
-
-      /* Memperhalus tampilan zona agar teks tetap di tengah saat diputar */
-      .player-zone {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        transition: background 0.2s;
-        -webkit-tap-highlight-color: transparent;
-        width: 100%; /* Pastikan lebar penuh saat vertikal */
-      }
-
-      #zone1 {
-        background-color: var(--p1-color);
-      }
-      #zone2 {
-        background-color: var(--p2-color);
-      }
-
-      .time-display {
-        font-size: 7rem;
-        font-weight: 800;
-        font-family: "Monaco", monospace;
-        margin: 10px 0;
-      }
-
-      .active {
-        filter: brightness(1.3);
-        z-index: 2;
-        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
-      }
-      .inactive {
-        opacity: 0.25;
-        filter: grayscale(0.5);
-      }
-      .low-time {
-        color: #fbbf24;
-        animation: pulse 0.5s infinite;
-      }
-
-      @keyframes pulse {
-        50% {
-          opacity: 0.7;
-        }
-      }
-
-      /* Panel Log Bawah */
-      .log-container {
-        height: 180px; /* Tinggi dikunci agar tidak menutup timer */
-        background: #000;
-        border-top: 2px solid #27272a;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .log-header {
-        padding: 8px 15px;
-        background: #18181b;
-        font-size: 0.75rem;
-        display: flex;
-        justify-content: space-between;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #a1a1aa;
-      }
-
-      #moveLog {
-        flex: 1;
-        overflow-y: auto;
-        padding: 0;
-        margin: 0;
-        list-style: none;
-      }
-
-      .log-item {
-        display: grid;
-        grid-template-columns: 40px 1fr 1fr 80px;
-        padding: 10px 15px;
-        border-bottom: 1px solid #18181b;
-        font-size: 0.85rem;
-      }
-
-      .p1-tag {
-        color: #60a5fa;
-        font-weight: bold;
-      }
-      .p2-tag {
-        color: #f87171;
-        font-weight: bold;
-      }
+      .active { filter: brightness(1.2); z-index: 2; box-shadow: inset 0 0 60px rgba(0,0,0,0.3); }
+      .inactive { opacity: 0.4; filter: grayscale(0.4); }
+      .low-time { color: var(--warning) !important; animation: pulse 0.5s infinite; }
+      
+      .stats-panel { background: var(--panel-bg); padding: 10px 20px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); color: #a1a1aa; }
+      .total-timer { font-weight: bold; color: var(--accent); }
+      
+      .log-container { height: 140px; background: var(--bg-color); border-top: 1px solid var(--border); display: flex; flex-direction: column; }
+      .log-header { padding: 8px 15px; background: var(--panel-bg); font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; color: #71717a; border-bottom: 1px solid var(--border); }
+      #moveLog { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
+      .log-item { display: grid; grid-template-columns: 50px 1fr 1fr 90px; padding: 8px 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     </style>
   </head>
   <body>
     <div class="settings-bar">
-      <select id="modeSelect" onchange="toggleIncInput()">
+      <select id="themeSelect" onchange="changeTheme()">
+        <option value="dark">🌙 Dark</option>
+        <option value="light">☀️ Light</option>
+      </select>
+
+      <select id="soundSelect" onchange="changeSound()">
+        <option value="on">🔊 Sound On</option>
+        <option value="off">🔇 Mute</option>
+      </select>
+
+      <select id="modeSelect" onchange="toggleModeUI()">
         <option value="normal">Normal</option>
         <option value="increment">Increment</option>
+        <option value="tournament">🏆 Tournament</option>
+        <option value="handicap">⚖️ Handicap</option>
       </select>
-      <div class="input-group">
-        <input
-          type="number"
-          id="baseMins"
-          value="5"
-          min="1"
-          style="width: 50px"
-        />
-        <span>Min</span>
+
+      <div id="standardInputs" class="input-group">
+        <input type="number" id="baseMins" value="10" min="0" /><span>M</span>
+        <input type="number" id="baseSecs" value="0" min="0" max="59" /><span>S</span>
       </div>
+
+      <div id="handicapInputs" style="display: none" class="input-group">
+        <span>P1:</span>
+        <input type="number" id="hP1m" value="5" min="0" /><span>M</span>
+        <input type="number" id="hP1s" value="0" min="0" max="59" /><span>S</span>
+        <span style="margin-left:12px">P2:</span>
+        <input type="number" id="hP2m" value="10" min="0" /><span>M</span>
+        <input type="number" id="hP2s" value="0" min="0" max="59" /><span>S</span>
+      </div>
+
       <div id="incInput" style="display: none" class="input-group">
-        <input
-          type="number"
-          id="incSecs"
-          value="3"
-          min="0"
-          style="width: 45px"
-        />
-        <span>Sec</span>
+        <input type="number" id="incSecs" value="3" min="0" /><span>+S</span>
       </div>
-      <button onclick="initGame()">Reset</button>
-      <button id="mainBtn" onclick="togglePlay()" style="background: #2563eb">
-        Mulai
-      </button>
+
+      <div id="limitInput" style="display: none" class="input-group">
+        <input type="number" id="moveLimit" value="50" min="1" /><span>Limit</span>
+      </div>
+
+      <button onclick="confirmReset()" style="background: #52525b;">Reset</button>
+      <button id="mainBtn" onclick="togglePlay()" style="background: #2563eb">Start</button>
     </div>
 
     <div class="game-container">
       <div id="zone1" class="player-zone" onclick="handleTap(1)">
-        <span style="font-size: 0.9rem; font-weight: bold; opacity: 0.8"
-          >PEMAIN 1</span
-        >
-        <div id="disp1" class="time-display">05:00</div>
+        <div id="name1" class="player-name" onclick="editName(event, 1)">Player 1</div>
+        <div id="disp1" class="time-display">10:00</div>
       </div>
-
       <div id="zone2" class="player-zone" onclick="handleTap(2)">
-        <span style="font-size: 0.9rem; font-weight: bold; opacity: 0.8"
-          >PEMAIN 2</span
-        >
-        <div id="disp2" class="time-display">05:00</div>
+        <div id="name2" class="player-name" onclick="editName(event, 2)">Player 2</div>
+        <div id="disp2" class="time-display">10:00</div>
       </div>
+    </div>
+
+    <div class="stats-panel">
+        <div>DURATION: <span class="total-timer" id="totalMatchTime">00:00</span></div>
+        <div id="moveCounterDisplay">MOVES: <span id="currentMoves">0</span> <span id="limitSpan" style="display:none">/ <span id="limitVal">50</span></span></div>
     </div>
 
     <div class="log-container">
       <div class="log-header">
-        <span>Riwayat Langkah</span>
-        <span id="moveCount">Total: 0</span>
+        <span>History</span>
+        <div>
+            <button class="export-btn" onclick="exportMatchLog()">Export Log (.txt)</button>
+            <span id="moveCountLog" style="margin-left:10px">Total: 0</span>
+        </div>
       </div>
       <ul id="moveLog"></ul>
     </div>
 
     <script>
-      let t1,
-        t2,
-        timer,
-        activePlayer = null,
-        isRunning = false,
-        moveCounter = 0,
-        lastTime = 0;
+      let t1, t2, timer, totalSeconds = 0, activePlayer = null, isRunning = false, moveCounter = 0, lastTime = 0;
+      let soundEnabled = true;
+      let moveHistory = []; 
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-      function playSound(f, d) {
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.frequency.value = f;
-        g.gain.value = 0.05;
-        o.connect(g);
-        g.connect(audioCtx.destination);
-        o.start();
-        o.stop(audioCtx.currentTime + d);
+      window.addEventListener('DOMContentLoaded', () => {
+        // Theme Persistence logic
+        const savedTheme = localStorage.getItem('chessTimerTheme');
+        if (savedTheme === 'light') {
+          document.body.classList.add('light-theme');
+          document.getElementById('themeSelect').value = 'light';
+        }
+        
+        if (localStorage.getItem('chessTimerSound') === 'off') {
+          soundEnabled = false;
+          document.getElementById('soundSelect').value = 'off';
+        }
+
+        const n1 = localStorage.getItem('p1_name'), n2 = localStorage.getItem('p2_name');
+        if (n1) document.getElementById('name1').textContent = n1;
+        if (n2) document.getElementById('name2').textContent = n2;
+        initGame();
+      });
+
+      function toggleModeUI() {
+        const mode = document.getElementById("modeSelect").value;
+        document.getElementById("standardInputs").style.display = (mode !== "handicap") ? "flex" : "none";
+        document.getElementById("handicapInputs").style.display = (mode === "handicap") ? "flex" : "none";
+        document.getElementById("incInput").style.display = (mode === "increment") ? "flex" : "none";
+        document.getElementById("limitInput").style.display = (mode === "tournament") ? "flex" : "none";
+        document.getElementById("limitSpan").style.display = (mode === "tournament") ? "inline" : "none";
+        if (mode === "tournament") document.getElementById("limitVal").textContent = document.getElementById("moveLimit").value;
+        initGame();
       }
 
-      function toggleIncInput() {
-        document.getElementById("incInput").style.display =
-          document.getElementById("modeSelect").value === "increment"
-            ? "flex"
-            : "none";
+      function changeTheme() {
+        const theme = document.getElementById("themeSelect").value;
+        document.body.classList.toggle("light-theme", theme === "light");
+        localStorage.setItem('chessTimerTheme', theme);
+      }
+
+      function changeSound() {
+        soundEnabled = (document.getElementById("soundSelect").value === "on");
+        localStorage.setItem('chessTimerSound', soundEnabled ? 'on' : 'off');
+      }
+
+      async function editName(event, id) {
+        event.stopPropagation();
+        const { value: newName } = await Swal.fire({ title: 'Player Name', input: 'text', inputValue: document.getElementById('name' + id).textContent, showCancelButton: true });
+        if (newName) { document.getElementById('name' + id).textContent = newName; localStorage.setItem('p' + id + '_name', newName); }
+      }
+
+      function playSound(f, d) {
+        if (!soundEnabled) return;
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.frequency.value = f; g.gain.value = 0.05;
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + d);
       }
 
       function initGame() {
         clearInterval(timer);
-        t1 = t2 = document.getElementById("baseMins").value * 60;
-        activePlayer = null;
-        isRunning = false;
-        moveCounter = 0;
-        document.getElementById("mainBtn").textContent = "Mulai";
+        const mode = document.getElementById("modeSelect").value;
+        
+        if (mode === "handicap") {
+            const m1 = parseInt(document.getElementById("hP1m").value) || 0;
+            const s1 = parseInt(document.getElementById("hP1s").value) || 0;
+            const m2 = parseInt(document.getElementById("hP2m").value) || 0;
+            const s2 = parseInt(document.getElementById("hP2s").value) || 0;
+            t1 = (m1 * 60) + s1;
+            t2 = (m2 * 60) + s2;
+        } else {
+            const mins = parseInt(document.getElementById("baseMins").value) || 0;
+            const secs = parseInt(document.getElementById("baseSecs").value) || 0;
+            t1 = t2 = (mins * 60) + secs;
+        }
+        
+        t1 = Math.max(1, t1); t2 = Math.max(1, t2);
+        totalSeconds = 0; activePlayer = null; isRunning = false; moveCounter = 0; moveHistory = [];
+        document.getElementById("mainBtn").textContent = "Start";
         document.getElementById("moveLog").innerHTML = "";
-        document.getElementById("moveCount").textContent = "Total: 0";
+        document.getElementById("currentMoves").textContent = "0";
+        document.getElementById("currentMoves").className = "";
+        document.getElementById("totalMatchTime").textContent = "00:00";
         updateUI();
+      }
+
+      function confirmReset() {
+        if (moveCounter > 0) { Swal.fire({ title: 'Reset Game?', icon: 'warning', showCancelButton: true }).then(r => { if(r.isConfirmed) initGame(); }); } 
+        else initGame();
       }
 
       function updateUI() {
         document.getElementById("disp1").textContent = format(t1);
         document.getElementById("disp2").textContent = format(t2);
-        document.getElementById("zone1").className =
-          `player-zone ${activePlayer === 1 ? "active" : activePlayer === null ? "" : "inactive"}`;
-        document.getElementById("zone2").className =
-          `player-zone ${activePlayer === 2 ? "active" : activePlayer === null ? "" : "inactive"}`;
-        if (t1 <= 10)
-          document.getElementById("disp1").classList.add("low-time");
-        if (t2 <= 10)
-          document.getElementById("disp2").classList.add("low-time");
+        document.getElementById("zone1").className = `player-zone ${activePlayer === 1 ? "active" : activePlayer === null ? "" : "inactive"}`;
+        document.getElementById("zone2").className = `player-zone ${activePlayer === 2 ? "active" : activePlayer === null ? "" : "inactive"}`;
+        if (isRunning) {
+            document.getElementById("disp1").classList.toggle("low-time", t1 <= 10 && activePlayer === 1);
+            document.getElementById("disp2").classList.toggle("low-time", t2 <= 10 && activePlayer === 2);
+        }
       }
 
-      function format(s) {
-        return `${Math.floor(s / 60)
-          .toString()
-          .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
-      }
+      function format(s) { return `${Math.floor(s/60).toString().padStart(2,"0")}:${(s%60).toString().padStart(2,"0")}`; }
 
       function togglePlay() {
         if (audioCtx.state === "suspended") audioCtx.resume();
-        if (isRunning) {
-          clearInterval(timer);
-          isRunning = false;
-          document.getElementById("mainBtn").textContent = "Lanjutkan";
-        } else {
+        if (isRunning) { clearInterval(timer); isRunning = false; document.getElementById("mainBtn").textContent = "Resume"; } 
+        else {
           if (!activePlayer) activePlayer = 1;
           lastTime = activePlayer === 1 ? t1 : t2;
-          isRunning = true;
-          document.getElementById("mainBtn").textContent = "Pause";
+          isRunning = true; document.getElementById("mainBtn").textContent = "Pause";
           timer = setInterval(tick, 1000);
         }
+        updateUI();
       }
 
       function tick() {
-        if (activePlayer === 1) {
-          t1--;
-          if (t1 <= 10) playSound(800, 0.05);
-          if (t1 <= 0) end(2);
-        } else {
-          t2--;
-          if (t2 <= 10) playSound(800, 0.05);
-          if (t2 <= 0) end(1);
-        }
+        totalSeconds++;
+        document.getElementById("totalMatchTime").textContent = format(totalSeconds);
+        if (activePlayer === 1) { t1--; if (t1 <= 10 && t1 > 0) playSound(800, 0.05); if (t1 <= 0) endMatch(2, "Time Out"); }
+        else { t2--; if (t2 <= 10 && t2 > 0) playSound(800, 0.05); if (t2 <= 0) endMatch(1, "Time Out"); }
         updateUI();
       }
 
@@ -345,44 +278,88 @@
         if (!isRunning || activePlayer !== id) return;
         moveCounter++;
         playSound(400, 0.03);
+        const mode = document.getElementById("modeSelect").value;
+        const limit = parseInt(document.getElementById("moveLimit").value);
+        
+        if (mode === "tournament") {
+            document.getElementById("currentMoves").textContent = moveCounter;
+            if (moveCounter >= limit - 5) document.getElementById("currentMoves").className = "move-warning";
+            if (moveCounter >= limit) { endMatch(null, "Move Limit Reached"); return; }
+        } else { document.getElementById("currentMoves").textContent = moveCounter; }
 
+        const inc = (mode === "increment") ? parseInt(document.getElementById("incSecs").value) : 0;
         const current = id === 1 ? t1 : t2;
-        const inc =
-          document.getElementById("modeSelect").value === "increment"
-            ? parseInt(document.getElementById("incSecs").value)
-            : 0;
+        const durationUsed = lastTime - current;
 
-        addLog(id, moveCounter, format(current), lastTime - current);
+        moveHistory.push({ move: moveCounter, playerIdx: id, playerName: document.getElementById('name' + id).textContent, used: durationUsed });
+        addLog(id, moveCounter, format(current), durationUsed);
 
-        if (id === 1) t1 += inc;
-        else t2 += inc;
+        if (id === 1) t1 += inc; else t2 += inc;
         activePlayer = id === 1 ? 2 : 1;
         lastTime = activePlayer === 1 ? t1 : t2;
         updateUI();
       }
 
       function addLog(p, m, rem, dur) {
+        const name = document.getElementById('name' + p).textContent;
         const li = document.createElement("li");
         li.className = "log-item";
-        li.innerHTML = `<span>#${m}</span><span class="${p === 1 ? "p1-tag" : "p2-tag"}">P${p}</span><span>Sisa: ${rem}</span><span style="color:#71717a">${dur}s</span>`;
-        const log = document.getElementById("moveLog");
-        log.insertBefore(li, log.firstChild);
-        document.getElementById("moveCount").textContent = `Total: ${m}`;
+        li.innerHTML = `<span>#${m}</span><span style="font-weight:bold">${name}</span><span>${rem}</span><span style="color:#71717a">${dur}s</span>`;
+        document.getElementById("moveLog").insertBefore(li, document.getElementById("moveLog").firstChild);
+        document.getElementById("moveCountLog").textContent = `Total: ${m}`;
       }
 
-      function end(p) {
-        clearInterval(timer);
-        playSound(200, 1);
-        alert(`Pemain ${p} Menang!`);
-        initGame();
+      function calculateStats() {
+        const stats = { p1: { totalTime: 0, moves: 0, fast: Infinity }, p2: { totalTime: 0, moves: 0, fast: Infinity } };
+        moveHistory.forEach(m => {
+            const key = m.playerIdx === 1 ? 'p1' : 'p2';
+            stats[key].totalTime += m.used;
+            stats[key].moves++;
+            if (m.used < stats[key].fast) stats[key].fast = m.used;
+        });
+        return stats;
       }
 
-      window.onkeydown = (e) => {
-        if (e.code === "Space") handleTap(1);
-        if (e.code === "Enter") handleTap(2);
-      };
+      function endMatch(winnerIdx, reason) {
+        clearInterval(timer); isRunning = false;
+        const stats = calculateStats();
+        const p1Name = document.getElementById('name1').textContent;
+        const p2Name = document.getElementById('name2').textContent;
+        const avg1 = stats.p1.moves ? (stats.p1.totalTime / stats.p1.moves).toFixed(1) : 0;
+        const avg2 = stats.p2.moves ? (stats.p2.totalTime / stats.p2.moves).toFixed(1) : 0;
+        const fast1 = stats.p1.fast === Infinity ? 0 : stats.p1.fast;
+        const fast2 = stats.p2.fast === Infinity ? 0 : stats.p2.fast;
 
-      initGame();
+        Swal.fire({
+          title: winnerIdx ? document.getElementById('name'+winnerIdx).textContent + ' WINS!' : 'MATCH ENDED',
+          html: `<div style="text-align:left; font-size:0.9rem; margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+                <p><b>Reason:</b> ${reason}</p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:5px;">
+                        <div style="color:#60a5fa; font-weight:bold">${p1Name}</div>Avg: ${avg1}s<br>Fast: ${fast1}s
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:5px;">
+                        <div style="color:#f87171; font-weight:bold">${p2Name}</div>Avg: ${avg2}s<br>Fast: ${fast2}s
+                    </div>
+                </div><p style="text-align:center; margin-top:10px; color:#a1a1aa">Total Moves: ${moveCounter}</p></div>`,
+          icon: winnerIdx ? 'success' : 'info', confirmButtonText: 'Play Again'
+        }).then(() => initGame());
+      }
+
+      function exportMatchLog() {
+        if (moveHistory.length === 0) { Swal.fire('No data', 'Start a game to record moves.', 'info'); return; }
+        const p1 = document.getElementById('name1').textContent; const p2 = document.getElementById('name2').textContent;
+        const stats = calculateStats();
+        let content = `CHESS TIMER PRO - MATCH LOG\n==========================\nPlayers: ${p1} vs ${p2}\nDuration: ${document.getElementById('totalMatchTime').textContent}\nMoves: ${moveCounter}\n\n`;
+        content += `STATS:\n${p1}: Avg ${ (stats.p1.totalTime/stats.p1.moves || 0).toFixed(1) }s/move\n${p2}: Avg ${ (stats.p2.totalTime/stats.p2.moves || 0).toFixed(1) }s/move\n\n`;
+        content += `MOVE | PLAYER       | TIME TAKEN\n--------------------------------\n`;
+        moveHistory.forEach(m => { content += `${m.move.toString().padEnd(4)} | ${m.playerName.padEnd(12)} | ${m.used}s\n`; });
+        const blob = new Blob([content], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `MatchLog_${p1}_vs_${p2}.txt`;
+        link.click();
+      }
     </script>
   </body>
 </html>
