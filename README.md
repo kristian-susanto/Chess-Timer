@@ -15,11 +15,11 @@ Chess Timer Pro is a responsive web-based chess clock application designed to pr
   - Persistent Dark and Light modes (auto-saved).
 - **Complete Log & Statistics:**
   - Move history is automatically saved.
-  - Average time and fastest move statistics.
+  - _Average time_ and _fastest move_ statistics.
   - Export Log (.txt) feature to save match data.
 - **Audio & Visual:**
   - Heartbeat sound effect for the last 10 seconds.
-  - Pulse animation when time is running out.
+  - _Pulse_ animation when time is running out.
   - Adaptive layout (automatically adjusts when the phone is tilted).
 
 ## 🚀 How to Use
@@ -32,12 +32,12 @@ Chess Timer Pro is a responsive web-based chess clock application designed to pr
 
 ## 🛠️ Technical Details
 
-This app is built using standard web technologies without any heavy external libraries (except SweetAlert2 for the pop-up UI):
+This app is built using standard web technologies without any heavy external _libraries_ (except SweetAlert2 for the pop-up UI):
 
 - Frontend: HTML5, CSS3 (Flexbox & Grid), JavaScript (Vanilla ES6).
-- Library: SweetAlert2 for beautiful dialog boxes.
-- Responsiveness: Uses custom Media Queries to detect landscape orientation on mobile devices for maximum convenience.
-- Storage: LocalStorage is used to store user theme and sound preferences.
+- Library: [SweetAlert2](https://sweetalert2.github.io/) for beautiful dialog boxes.
+- Responsiveness: Uses custom _Media Queries_ to detect landscape orientation on mobile devices for maximum convenience.
+- Storage: `localStorage` is used to store user theme and sound preferences.
 
 ## 📱 Mobile Optimization
 

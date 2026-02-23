@@ -46,7 +46,6 @@
       * {
         box-sizing: border-box;
       }
-
       body {
         font-family: "Inter", sans-serif;
         background-color: var(--bg-color);
@@ -55,57 +54,111 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
-        height: 100dvh; /* Dynamic viewport height untuk mobile */
         overflow: hidden;
         transition: background-color 0.3s;
       }
+      .swal2-popup {
+        background: var(--panel-bg) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+      }
 
-      /* SETTINGS BAR - Dibuat lebih ringkas */
       .settings-bar {
         background: var(--panel-bg);
-        padding: 8px;
+        padding: 12px;
         display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto; /* Scroll horizontal jika menu terlalu banyak */
-        justify-content: flex-start;
+        flex-wrap: wrap;
+        justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         border-bottom: 1px solid var(--border);
         z-index: 10;
-        scrollbar-width: none; /* Sembunyikan scrollbar di Firefox */
       }
-      .settings-bar::-webkit-scrollbar {
-        display: none;
-      } /* Sembunyikan scrollbar di Chrome/Safari */
-
       .input-group {
         display: flex;
         align-items: center;
-        gap: 5px;
-        font-size: 0.8rem;
-        white-space: nowrap;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 700;
       }
 
       select,
       input {
-        padding: 6px;
+        padding: 8px;
         border-radius: 6px;
         border: 1px solid var(--border);
         background-color: var(--input-bg);
         color: var(--text);
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+        outline: none;
+        text-align: center;
         font-weight: bold;
       }
 
+      /* Widened input fields */
       input[type="number"] {
-        width: 50px;
+        width: 70px;
       }
 
-      /* GAME CONTAINER */
+      button {
+        padding: 8px 16px;
+        border-radius: 6px;
+        background: var(--accent);
+        cursor: pointer;
+        border: none;
+        font-weight: bold;
+        color: white;
+        transition: transform 0.1s;
+        font-size: 0.9rem;
+      }
+      button:active {
+        transform: scale(0.95);
+      }
+
       .game-container {
         display: flex;
         flex: 1;
         min-height: 0;
+      }
+      /* Perbaikan untuk tampilan Mobile */
+      @media (max-width: 932px) {
+        .game-container {
+          /* Gunakan row jika horizontal, column jika vertikal */
+          flex-direction: row;
+        }
+
+        /* Jika layar HP tegak (Portrait) */
+        @media (orientation: portrait) {
+          .game-container {
+            flex-direction: column;
+          }
+          #zone1 {
+            transform: rotate(180deg);
+          }
+          .time-display {
+            font-size: 18vw; /* Ukuran dinamis berdasarkan lebar layar */
+          }
+        }
+
+        /* Jika layar HP miring (Landscape) - SOLUSI UTAMA */
+        @media (orientation: landscape) {
+          .time-display {
+            font-size: 25vh; /* Ukuran dinamis berdasarkan TINGGI layar agar tidak meluap */
+            line-height: 1;
+          }
+          .player-name {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+          }
+          .settings-bar {
+            padding: 5px;
+            gap: 5px;
+          }
+          /* Sembunyikan log history di landscape agar angka jam punya ruang */
+          .log-container {
+            height: 80px;
+          }
+        }
       }
 
       .player-zone {
@@ -115,111 +168,99 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        position: relative;
-        transition: filter 0.2s;
+        transition:
+          background 0.2s,
+          opacity 0.3s;
         -webkit-tap-highlight-color: transparent;
+        color: white;
+        position: relative;
       }
-
-      .time-display {
-        font-size: clamp(3rem, 15vw, 8rem); /* Font responsif */
-        font-weight: 800;
-        font-family: monospace;
-        line-height: 1;
-      }
-
-      .player-name {
-        font-size: 0.9rem;
-        font-weight: bold;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-        opacity: 0.7;
-      }
-
-      /* MEDIA QUERIES UNTUK LANDSCAPE HP */
-      @media (orientation: landscape) and (max-height: 500px) {
-        .settings-bar {
-          padding: 4px;
-          gap: 8px;
-        }
-        .player-name {
-          font-size: 0.7rem;
-          margin-bottom: 2px;
-        }
-        .time-display {
-          font-size: 18vh;
-        } /* Jam menyesuaikan tinggi layar */
-        .log-container {
-          display: none;
-        } /* Sembunyikan log agar jam besar */
-        .stats-panel {
-          padding: 4px 15px;
-          font-size: 0.7rem;
-        }
-      }
-
-      /* MEDIA QUERIES UNTUK PORTRAIT (HP Tegak) */
-      @media (max-width: 768px) and (orientation: portrait) {
-        .game-container {
-          flex-direction: column;
-        }
-        #zone1 {
-          transform: rotate(180deg);
-        }
-        .time-display {
-          font-size: 5rem;
-        }
-        .settings-bar {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-      }
-
-      /* STYLE TAMBAHAN */
       #zone1 {
         background-color: var(--p1-color);
       }
       #zone2 {
         background-color: var(--p2-color);
       }
+
+      .player-name {
+        font-size: 1rem;
+        font-weight: bold;
+        opacity: 0.8;
+        text-transform: uppercase;
+        padding: 5px 10px;
+        border: 1px dashed transparent;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+      .time-display {
+        font-size: 7rem;
+        font-weight: 800;
+        font-family: monospace;
+        font-variant-numeric: tabular-nums; /* Agar angka tidak goyang saat berubah */
+        max-width: 100%;
+        text-align: center;
+      }
+
       .active {
-        filter: brightness(1.3);
+        filter: brightness(1.2);
         z-index: 2;
-        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+        box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.3);
       }
       .inactive {
-        opacity: 0.5;
-        filter: grayscale(0.3);
+        opacity: 0.4;
+        filter: grayscale(0.4);
+      }
+      .low-time {
+        color: var(--warning) !important;
+        animation: pulse 0.5s infinite;
       }
 
       .stats-panel {
         background: var(--panel-bg);
-        padding: 8px 20px;
-        font-size: 0.8rem;
+        padding: 10px 20px;
+        font-size: 0.85rem;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         border-top: 1px solid var(--border);
+        color: #a1a1aa;
+      }
+      .total-timer {
+        font-weight: bold;
+        color: var(--accent);
       }
 
       .log-container {
-        height: 100px; /* Diperkecil untuk memberi ruang pada jam */
+        height: 140px;
         background: var(--bg-color);
+        border-top: 1px solid var(--border);
         display: flex;
         flex-direction: column;
       }
-
+      .log-header {
+        padding: 8px 15px;
+        background: var(--panel-bg);
+        font-size: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-transform: uppercase;
+        color: #71717a;
+        border-bottom: 1px solid var(--border);
+      }
       #moveLog {
         flex: 1;
         overflow-y: auto;
-        margin: 0;
-        padding: 0;
         list-style: none;
+        padding: 0;
+        margin: 0;
       }
       .log-item {
         display: grid;
-        grid-template-columns: 40px 1fr 1fr 60px;
-        padding: 5px 15px;
-        font-size: 0.8rem;
+        grid-template-columns: 50px 1fr 1fr 90px;
+        padding: 8px 15px;
         border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
       }
     </style>
   </head>
