@@ -312,17 +312,17 @@
   </head>
   <body>
     <div class="settings-bar">
-      <select id="themeSelect" onchange="changeTheme()">
+      <select id="themeSelect" onchange="changeTheme()" onfocus="pauseGame()">
         <option value="dark">🌙 Dark</option>
         <option value="light">☀️ Light</option>
       </select>
 
-      <select id="soundSelect" onchange="changeSound()">
+      <select id="soundSelect" onchange="changeSound()" onfocus="pauseGame()">
         <option value="on">🔊 Sound On</option>
         <option value="off">🔇 Mute</option>
       </select>
 
-      <select id="modeSelect" onchange="toggleModeUI()">
+      <select id="modeSelect" onchange="toggleModeUI()" onfocus="pauseGame()">
         <option value="normal">Normal</option>
         <option value="increment">Increment</option>
         <option value="tournament">🏆 Tournament</option>
@@ -330,33 +330,76 @@
       </select>
 
       <div id="standardInputs" class="input-group">
-        <input type="number" id="baseMins" value="10" min="0" /><span>M</span>
-        <input type="number" id="baseSecs" value="0" min="0" max="59" /><span
-          >S</span
-        >
+        <input
+          type="number"
+          id="baseMins"
+          value="10"
+          min="0"
+          onfocus="pauseGame()"
+        /><span>M</span>
+        <input
+          type="number"
+          id="baseSecs"
+          value="0"
+          min="0"
+          max="59"
+          onfocus="pauseGame()"
+        /><span>S</span>
       </div>
 
       <div id="handicapInputs" style="display: none" class="input-group">
         <span>P1:</span>
-        <input type="number" id="hP1m" value="5" min="0" /><span>M</span>
-        <input type="number" id="hP1s" value="0" min="0" max="59" /><span
-          >S</span
-        >
+        <input
+          type="number"
+          id="hP1m"
+          value="5"
+          min="0"
+          onfocus="pauseGame()"
+        /><span>M</span>
+        <input
+          type="number"
+          id="hP1s"
+          value="0"
+          min="0"
+          max="59"
+          onfocus="pauseGame()"
+        /><span>S</span>
         <span style="margin-left: 12px">P2:</span>
-        <input type="number" id="hP2m" value="10" min="0" /><span>M</span>
-        <input type="number" id="hP2s" value="0" min="0" max="59" /><span
-          >S</span
-        >
+        <input
+          type="number"
+          id="hP2m"
+          value="10"
+          min="0"
+          onfocus="pauseGame()"
+        /><span>M</span>
+        <input
+          type="number"
+          id="hP2s"
+          value="0"
+          min="0"
+          max="59"
+          onfocus="pauseGame()"
+        /><span>S</span>
       </div>
 
       <div id="incInput" style="display: none" class="input-group">
-        <input type="number" id="incSecs" value="3" min="0" /><span>+S</span>
+        <input
+          type="number"
+          id="incSecs"
+          value="3"
+          min="0"
+          onfocus="pauseGame()"
+        /><span>+S</span>
       </div>
 
       <div id="limitInput" style="display: none" class="input-group">
-        <input type="number" id="moveLimit" value="50" min="1" /><span
-          >Limit</span
-        >
+        <input
+          type="number"
+          id="moveLimit"
+          value="50"
+          min="1"
+          onfocus="pauseGame()"
+        /><span>Limit</span>
       </div>
 
       <div class="input-group">
@@ -660,6 +703,16 @@
         updateUI();
       }
 
+      function pauseGame() {
+        if (isRunning) {
+          clearInterval(timer);
+          isRunning = false;
+          document.getElementById("mainBtn").textContent = "Resume";
+          document.body.classList.remove("is-playing");
+          updateUI();
+        }
+      }
+
       function tick() {
         totalSeconds++;
         document.getElementById("totalMatchTime").textContent =
@@ -801,6 +854,11 @@
         link.download = `MatchLog_${p1}_vs_${p2}.txt`;
         link.click();
       }
+
+      // Pause otomatis jika pindah tab atau keluar aplikasi
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pauseGame();
+      });
     </script>
   </body>
 </html>

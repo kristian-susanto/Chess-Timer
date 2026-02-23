@@ -1,52 +1,65 @@
 # ⏳ Chess Timer Pro - Professional Edition
 
-Chess Timer Pro is a responsive web-based chess clock application designed to provide a fair and functional chess playing experience. The application supports various game modes such as Normal, Increment (Fischer), Tournament, and Handicap, and is optimized for mobile devices (Portrait & Landscape).
-
-## ✨ Key Features
-
-- **Variety of Game Modes:**
-  - **Normal:** Standard time for both players.
-  - **Increment (+S):** Adds time each time a player completes a move (Fischer system).
-  - **Tournament:** Comes with a move limit (_Move Limit_).
-  - **Handicap:** Provides different time advantages for players of different levels.
-- **Full Customization:**
-  - Change player names directly.
-  - Choose button color schemes for each player.
-  - Persistent Dark and Light modes (auto-saved).
-- **Complete Log & Statistics:**
-  - Move history is automatically saved.
-  - _Average time_ and _fastest move_ statistics.
-  - Export Log (.txt) feature to save match data.
-- **Audio & Visual:**
-  - Heartbeat sound effect for the last 10 seconds.
-  - _Pulse_ animation when time is running out.
-  - Adaptive layout (automatically adjusts when the phone is tilted).
-
-## 🚀 How to Use
-
-1. **Settings:** Select a game mode and set the base time in the top navigation bar.
-2. **Start:** Click the **Start** button to begin. The first player's clock will be active.
-3. **Play:** Tap the active player's screen area to pass the turn to the opposing player.
-4. **Edit Name:** Click on the "Player 1" or "Player 2" text to change the name.
-5. **Reset:** Use the **Reset** button to restart the session. A confirmation will appear if the match is in progress to prevent accidental interruptions.
-
-## 🛠️ Technical Details
-
-This app is built using standard web technologies without any heavy external _libraries_ (except SweetAlert2 for the pop-up UI):
-
-- Frontend: HTML5, CSS3 (Flexbox & Grid), JavaScript (Vanilla ES6).
-- Library: [SweetAlert2](https://sweetalert2.github.io/) for beautiful dialog boxes.
-- Responsiveness: Uses custom _Media Queries_ to detect landscape orientation on mobile devices for maximum convenience.
-- Storage: `localStorage` is used to store user theme and sound preferences.
-
-## 📱 Mobile Optimization
-
-This app uses the `dvh` (Dynamic Viewport Height) and `clamp()` CSS features to ensure the clock remains large and isn't cut off by the browser navigation bar on Android or iOS.
-
-## 📄 License
-
-This project is open-source. Please feel free to use and modify it to suit your needs.
+**Chess Timer Pro** is a high-performance web-based chess clock application designed for both amateur and professional tournaments. With a focus on precision and responsiveness, it brings the functionality of a physical chess clock to a digital device, with support for _Increment_, _Handicap_, and in-depth match statistics.
 
 ---
 
-Developed by **Kristian Susanto**
+## ✨ Key Features
+
+### 🎮 Comprehensive Game Modes
+
+- **Normal:** Standard time control for casual play.
+- **Increment (Fischer):** Automatic time increments after each move (seconds + S system).
+- **Tournament:** Competition mode with a _move limit_ and visual warnings when approaching the limit.
+- **Handicap:** Balanced game play with different time settings for each player (ideal for advanced players vs. beginners).
+
+### 🛠️ Unlimited Customization
+
+- **Dynamic Names:** Change player names directly through interactive dialogs.
+- **Personalized Aesthetics:** Choose a unique color scheme for each player zone to avoid confusion while playing.
+- **Dual Themes:** Supports Dark Mode (OLED Friendly) and Light Mode with data persistence via `localStorage`.
+
+### 📊 Match Analytics & History
+
+- **Live Move Logging:** Every move is recorded, complete with remaining time and duration per move.
+- **Post-Match Statistics:** Displays average thinking time (_Average Time_) and fastest move (_Fastest Move_).
+- **Export Feature:** Download the complete match history in `.txt` format for post-match analysis.
+
+---
+
+## 🚀 User Guide
+
+1.  **Configuration:** Select a mode in the top navigation panel. Set the base time and additional
+2.  **Initiation:** Click **Start** to begin. The first player's clock will start ticking.
+3.  **Operation:** Tap the active player's screen area to pass the turn.
+4.  **Personalization:** Click on the "Player 1" or "Player 2" text to rename them, or use the _color picker_ to change the zone color.
+5.  **Keamanan Data:** The **Reset** button is equipped with confirmation protection (via SweetAlert2) to prevent accidental data deletion during a match.
+
+---
+
+## 🛠️ Technical Architecture
+
+This application is built on the _Zero-Dependency_ principle (light and fast) with maximum performance:
+
+- **Engine:** Vanilla JavaScript (ES6+) for precise timing logic.
+- **Audio Engine:** Uses the `Web Audio API` for a high-frequency sound oscillator that remains responsive without _latency_ (instead of simply playing .mp3 files).
+- **UI Components:** [SweetAlert2](https://sweetalert2.github.io/) for elegant modal interactions.
+- **Layouting:** CSS Grid & Flexbox with the `clamp()` system for responsive typography across screen sizes.
+
+---
+
+## 📱 Mobile Optimization (UX)
+
+This app is designed specifically for mobile devices:
+
+- **Dynamic Viewport:** Uses the `dvh` unit to prevent the UI from being cut off by the browser's _address bar_.
+- **Landscape Mode:** When the phone is tilted, the app automatically hides non-essential elements to maximize the player's touchscreen.
+- **Auto-Pause:** The game will automatically pause if the user switches tabs or minimizes the browser, ensuring time integrity is maintained.
+
+---
+
+## 📄 License & Credits
+
+This project is _Open Source_.
+
+---
