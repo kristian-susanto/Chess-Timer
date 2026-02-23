@@ -120,58 +120,15 @@
         flex: 1;
         min-height: 0;
       }
-      /* Perbaikan untuk tampilan Mobile */
-      @media (max-width: 932px) {
+      @media (max-width: 768px) {
         .game-container {
-          /* Gunakan row jika horizontal, column jika vertikal */
-          flex-direction: row;
+          flex-direction: column;
         }
-
-        /* Jika layar HP tegak (Portrait) */
-        @media (orientation: portrait) {
-          .game-container {
-            flex-direction: column;
-          }
-          #zone1 {
-            transform: rotate(180deg);
-          }
-          .time-display {
-            font-size: 18vw; /* Ukuran dinamis berdasarkan lebar layar */
-          }
+        #zone1 {
+          transform: rotate(180deg);
         }
-
-        /* Jika layar HP miring (Landscape) - SOLUSI UTAMA */
-        @media (orientation: landscape) {
-          .time-display {
-            font-size: 25vh; /* Ukuran dinamis berdasarkan TINGGI layar agar tidak meluap */
-            line-height: 1;
-            margin: 0;
-          }
-          .player-name {
-            font-size: 0.8rem;
-            padding: 2px 12px;
-            margin-bottom: 5px;
-            /* Memastikan nama tidak memakan terlalu banyak ruang */
-            max-width: 80%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          .settings-bar {
-            padding: 4px;
-            gap: 6px;
-            /* Opsional: kecilkan font input agar bar atas lebih tipis */
-            font-size: 0.8rem;
-          }
-          .player-zone {
-            /* Memberi ruang sedikit lebih lega di tengah */
-            justify-content: space-evenly;
-          }
-
-          /* Sembunyikan log history di landscape agar angka jam punya ruang maksimal */
-          .log-container {
-            display: none;
-          }
+        .time-display {
+          font-size: 4rem !important;
         }
       }
 
@@ -199,22 +156,17 @@
       .player-name {
         font-size: 1rem;
         font-weight: bold;
-        opacity: 0.9;
+        opacity: 0.8;
         text-transform: uppercase;
-        padding: 6px 15px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 20px;
+        padding: 5px 10px;
+        border: 1px dashed transparent;
+        border-radius: 4px;
         margin-bottom: 10px;
-        transition: all 0.3s ease;
       }
       .time-display {
         font-size: 7rem;
         font-weight: 800;
         font-family: monospace;
-        font-variant-numeric: tabular-nums; /* Agar angka tidak goyang saat berubah */
-        max-width: 100%;
-        text-align: center;
       }
 
       .active {
