@@ -248,7 +248,36 @@
         font-size: 0.85rem;
       }
 
-      /* MEDIA QUERIES: LANDSCAPE HP */
+      /* Custom Outline Style untuk Tombol di Tema Terang (Tulisan Tetap Hitam) */
+      .light-theme .settings-bar button,
+      .light-theme .export-btn {
+        background: transparent !important; /* Latar belakang transparan */
+        color: #000000 !important; /* Tulisan dipaksa hitam */
+        border: 2px solid var(--border); /* Outline default */
+        transition: all 0.2s ease;
+      }
+
+      /* Khusus Tombol Start/Resume/Pause - Outline Biru */
+      .light-theme #mainBtn {
+        border-color: #2563eb !important;
+      }
+
+      /* Khusus Tombol Reset - Outline Merah */
+      .light-theme button[onclick="confirmReset()"] {
+        border-color: #52525b !important;
+      }
+
+      /* Khusus Tombol Export - Outline Hijau */
+      .light-theme .export-btn {
+        border-color: var(--accent) !important;
+      }
+
+      /* Efek Hover: Sedikit bayangan atau abu-abu muda agar tetap terasa seperti tombol */
+      .light-theme .settings-bar button:hover,
+      .light-theme .export-btn:hover {
+        background: rgba(0, 0, 0, 0.05) !important; /* Efek highlight tipis */
+      }
+
       /* MEDIA QUERIES: LANDSCAPE HP */
       @media (orientation: landscape) and (max-height: 500px) {
         .settings-bar {
@@ -538,14 +567,32 @@
 
       async function editName(event, id) {
         event.stopPropagation();
+
+        // CEGAH ganti nama jika game sedang berjalan
+        if (isRunning) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top",
+            showConfirmButton: false,
+            timer: 5000,
+          });
+          Toast.fire({
+            icon: "warning",
+            title: "Pause the game to change name",
+          });
+          return;
+        }
+
         const { value: newName } = await Swal.fire({
           title: "Player Name",
           input: "text",
-          inputValue: document.getElementById("name" + id).textContent,
+          inputValue: document.getElementById("name" + id).textContent.trim(),
           showCancelButton: true,
+          confirmButtonColor: "#2563eb",
         });
-        if (newName) {
-          document.getElementById("name" + id).textContent = newName;
+
+        if (newName && newName.trim() !== "") {
+          document.getElementById("name" + id).textContent = newName.trim();
         }
       }
 
@@ -615,26 +662,26 @@
       }
 
       function confirmReset() {
-        // Cek apakah permainan sedang berjalan atau sudah ada langkah yang dibuat
+        // Logika: Jika game sedang jalan ATAU sudah ada langkah yang dibuat (meski sedang pause)
         if (isRunning || moveCounter > 0) {
           Swal.fire({
             title: "Reset Game?",
             text: "All time data and history logs will be deleted!",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#ef4444", // Warna merah (danger)
+            confirmButtonColor: "#ef4444",
             cancelButtonColor: "#52525b",
             confirmButtonText: "Yes, Reset Now",
             cancelButtonText: "Cancel",
           }).then((result) => {
             if (result.isConfirmed) {
               initGame();
-              // Opsional: Beri notifikasi kecil bahwa reset berhasil
+              // Notifikasi sukses reset
               const Toast = Swal.mixin({
                 toast: true,
                 position: "top-end",
                 showConfirmButton: false,
-                timer: 2000,
+                timer: 3000,
                 timerProgressBar: true,
               });
               Toast.fire({
@@ -644,7 +691,7 @@
             }
           });
         } else {
-          // Jika belum ada aktivitas sama sekali, langsung reset tanpa tanya
+          // Jika benar-benar baru buka aplikasi & belum ada gerak sama sekali
           initGame();
         }
       }
